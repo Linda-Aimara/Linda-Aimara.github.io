@@ -3,6 +3,57 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.navegacion {
+  width: 1000px;
+  margin: 30px auto;
+  background: #a782e2;
+}
+
+.navegacion ul{
+  list-style: none;
+}
+.menu > li{
+  position: relative;
+  display: inline-block;
+}
+
+.menu > li > a{
+  display:block;
+  padding: 15px 20px;
+  color: #360b3a;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-decoration: none;
+
+}
+
+.menu li a:hover{
+  color: antiquewhite;
+  transition: all .3s;
+}
+
+/*submenu*/
+.submenu{
+    position: absolute;
+    background: #a782e2;
+    width: 120%;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 1.5s;
+}
+
+.submenu li a{
+    display: block;
+    padding: 15px;
+    color: #360b3a;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-decoration: none;
+}
+
+.menu li:hover .submenu{
+    visibility: visible;
+    opacity: 1;
+}
+
 h1 {
     text-align: center;
 font-family: Times, serif;
@@ -15,4 +66,119 @@ background-color: rgb(124, 28, 128);
   border: 1px solid rgb(94, 29, 90);
   margin: 0px;
   padding: 10px;
+}
+
+div.intro {
+	text-align: justify;
+	font-family: Arial, Helvetica, sans-serif;
+  font-size: 19px;
+}
+
+img.Agnodice{
+  float: left;
+  margin-right: 80px;
+  margin-left: 40px;
+}
+
+div.Agnodice{
+  font-family: Arial, Helvetica, sans-serif;
+	font-size: 19px;
+	text-align: justify;
+ 	margin-top: 40px;
+	margin-bottom: 40px;
+  margin-right: 36px;
+}
+
+img.Sor{
+    float: right;
+    margin-right: 40px;
+    margin-left: 80px;
+  }
+  
+div.Sor{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 19px;
+    text-align: justify;
+     margin-top: 40px;
+    margin-bottom: 40px;
+    margin-right: 36px;
+
+}
+
+img.Anna{
+  float: left;
+  margin-right: 80px;
+  margin-left: 40px;
+}
+
+div.Anna{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 19px;
+  text-align: justify;
+   margin-top: 40px;
+  margin-bottom: 40px;
+  margin-right: 36px;
+
+}
+img.Kate{
+  float: right;
+  margin-right: 40px;
+  margin-left: 80px;
+}
+
+div.Kate{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 19px;
+  text-align: justify;
+   margin-top: 40px;
+  margin-bottom: 40px;
+  margin-right: 36px;
+
+}
+
+img.Raicho{
+  float: left;
+  margin-right: 80px;
+  margin-left: 40px;
+}
+
+div.Raicho{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 19px;
+  text-align: justify;
+   margin-top: 40px;
+  margin-bottom: 40px;
+  margin-right: 36px;
+
+}
+
+img.Doria{
+  float: right;
+  margin-right: 40px;
+  margin-left: 80px;
+}
+
+div.Doria{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 19px;
+  text-align: justify;
+   margin-top: 40px;
+  margin-bottom: 40px;
+  margin-right: 36px;
+
+}
+img.Rosalind{
+  float: left;
+  margin-right: 80px;
+  margin-left: 40px;
+}
+
+div.Rosalind{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 19px;
+  text-align: justify;
+   margin-top: 40px;
+  margin-bottom: 40px;
+  margin-right: 36px;
+
 }
