@@ -1,0 +1,81 @@
+body {
+    background-color: rgb(247, 238, 248);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.navegacion {
+  width: 1000px;
+  margin: 30px auto;
+  background: #a782e2;
+}
+
+.navegacion ul{
+  list-style: none;
+}
+.menu > li{
+  position: relative;
+  display: inline-block;
+}
+
+.menu > li > a{
+  display:block;
+  padding: 15px 20px;
+  color: #360b3a;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  text-decoration: none;
+
+}
+
+.menu li a:hover{
+  color: antiquewhite;
+  transition: all .3s;
+}
+
+.submenu{
+    position: absolute;
+    background: #a782e2;
+    width: 120%;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 1.5s;
+}
+
+.submenu li a{
+    display: block;
+    padding: 15px;
+    color: #360b3a;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-decoration: none;
+}
+
+.menu li:hover .submenu{
+    visibility: visible;
+    opacity: 1;
+}
+
+h1 {
+    text-align: center;
+font-family: Times, serif;
+color: rgb(244, 244, 244);
+font-stretch: expanded; 
+}
+
+h2 {
+  text-align: center;
+font-family: Times, serif;
+color: rgb(244, 244, 244);
+font-stretch: expanded; 
+}
+
+header {
+background-color: rgb(124, 28, 128);
+  border: 1px solid rgb(94, 29, 90);
+  margin: 0px;
+  padding: 10px;
+}
+
+div.intro {
+	text-align: justify;
+	font-family: Arial, Helvetica, sans-serif;
+  font-size: 19px;
+}
