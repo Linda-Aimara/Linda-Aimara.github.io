@@ -1,0 +1,42 @@
+"0","## Definir el contraste entre condiciones"
+"0",""
+"0","contrast <- c(""condition"",""Ad SE"",""Ad CD3CD28"")"
+"0",""
+"0","## Obtener resultados sin reducción de LFC"
+"0",""
+"0","res1 <- results(dds_results,contrast = c(""condition"",""Ad SE"",""Ad CD3CD28""), alpha = 0.05)"
+"0",""
+"0",""
+"0","## Aplicar reducción de LFC para mejorar la estimación"
+"0",""
+"0","res1 <- lfcShrink(dds_results, contrast = c(""condition"",""Ad SE"",""Ad CD3CD28""), res=res1, type = ""normal"")"
+"2","using 'normal' for LFC shrinkage, the Normal prior from Love et al (2014).
+
+Note that type='apeglm' and type='ashr' have shown to have less bias than type='normal'.
+See ?lfcShrink for more details on shrinkage type, and the DESeq2 vignette.
+Reference: https://doi.org/10.1093/bioinformatics/bty895
+"
+"0","## Resumen de los resultados"
+"0","summary(res1)"
+"1","
+"
+"1","out of 32558 with nonzero total read count
+"
+"1","adjusted p-value < 0.05
+"
+"1","LFC > 0 (up)       : 1992, 6.1%
+"
+"1","LFC < 0 (down)     : 3126, 9.6%
+"
+"1","outliers [1]       : 15, 0.046%
+"
+"1","low counts [2]     : 13155, 40%
+"
+"1","(mean count < 4)
+"
+"1","[1] see 'cooksCutoff' argument of ?results
+"
+"1","[2] see 'independentFiltering' argument of ?results
+"
+"1","
+"

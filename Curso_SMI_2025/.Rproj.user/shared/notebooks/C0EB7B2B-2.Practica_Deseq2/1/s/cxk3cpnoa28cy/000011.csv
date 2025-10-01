@@ -1,0 +1,21 @@
+"0","dds_results <- DESeq(dds)"
+"2","using pre-existing size factors
+"
+"2","estimating dispersions
+"
+"2","gene-wise dispersion estimates
+"
+"2","mean-dispersion relationship
+"
+"2","  Note: levels of factors in the design contain characters other than
+  letters, numbers, '_' and '.'. It is recommended (but not required) to use
+  only letters, numbers, and delimiters '_' or '.', as these are safe characters
+  for column names in R. [This is a message, not a warning or an error]
+"
+"2","final dispersion estimates
+"
+"2","fitting model and testing
+"
+"0","png(here(""imagenes/disp.png""), units=""in"", width=5, height=5, res=600)"
+"0",""
+"0","plotDispEsts(dds_results)"

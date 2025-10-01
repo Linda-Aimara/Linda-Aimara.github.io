@@ -1,0 +1,12 @@
+"0","# Convertir símbolos de genes a ENTREZID"
+"0","GDE_SE_ENTREZ <- bitr(sigA$gene, fromType = ""SYMBOL"", toType = ""ENTREZID"", OrgDb = org.Hs.eg.db)"
+"2","'select()' returned 1:1 mapping between keys
+and columns
+"
+"2","Warning: 31.23% of input gene IDs are fail to map..."
+"0","GDE_ES_ENTREZ <- bitr(sigCD3CD28$gene, fromType = ""SYMBOL"", toType = ""ENTREZID"", OrgDb = org.Hs.eg.db)"
+"2","'select()' returned 1:1 mapping between keys
+and columns
+"
+"2","Warning: 11.17% of input gene IDs are fail to map..."
+"0","head(GDE_SE_ENTREZ)"

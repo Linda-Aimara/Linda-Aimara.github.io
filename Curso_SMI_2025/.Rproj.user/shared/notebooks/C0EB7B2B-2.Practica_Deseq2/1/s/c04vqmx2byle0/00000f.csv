@@ -1,0 +1,16 @@
+"0","SE <-sigA$gene"
+"0","ES <-sigCD3CD28$gene"
+"0","GDE_SE = bitr(SE, fromType=""SYMBOL"", toType=""ENTREZID"", OrgDb=""org.Hs.eg.db"")"
+"2","'select()' returned 1:1 mapping between keys
+and columns
+"
+"2","Warning: 31.23% of input gene IDs are fail to map..."
+"0","View(GDE_SE)"
+"0","GDE_ES = bitr(ES, fromType=""SYMBOL"", toType=""ENTREZID"", OrgDb=""org.Hs.eg.db"")"
+"2","'select()' returned 1:1 mapping between keys
+and columns
+"
+"2","Warning: 11.17% of input gene IDs are fail to map..."
+"0","View(GDE_ES)"
+"0","GDE_SE_ENTREZ <-GDE_SE$ENTREZID"
+"0","GDE_ES_ENTREZ <-GDE_ES$ENTREZID"

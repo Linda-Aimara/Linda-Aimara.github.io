@@ -1,0 +1,8 @@
+"0","# Definir el vector “condition” con las condiciones (factores) correspondientes"
+"0","# Aquí se usan dos niveles: ""Ad SE"" y ""Ad CD3CD28"""
+"0","condition = factor(c(""Ad SE"",""Ad SE"", ""Ad SE"", ""Ad CD3CD28"",""Ad CD3CD28"", ""Ad CD3CD28""))"
+"0",""
+"0","# Crear un data.frame “meta” que contendrá esa variable “condition”"
+"0","# Se asignan los nombres de fila (row.names) usando los nombres de columnas del objeto counts"
+"0","meta <- data.frame(condition, row.names = colnames(counts))"
+"0","head(meta)"

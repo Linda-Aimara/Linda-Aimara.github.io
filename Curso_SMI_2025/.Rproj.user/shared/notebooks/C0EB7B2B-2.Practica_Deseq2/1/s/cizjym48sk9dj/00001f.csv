@@ -1,0 +1,7 @@
+"0","x <- as.data.frame(ck1)"
+"0","write.table(x, file = here(""resultados_tablas/listas_enrichGO_PE.txt""), sep = ""\t"", col.names = TRUE)"
+"0","View(ck1)  # Ver los resultados en una ventana interactiva"
+"0",""
+"0","## Visualizar los resultados mediante un gráfico de puntos"
+"0",""
+"0","dotplot(ck1, showCategory = 10, font.size = 10.5) + ggtitle(""Análisis de enriquecimiento funcional"")"

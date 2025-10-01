@@ -1,0 +1,3 @@
+"0","png(here(""imagenes/disp_result.png""), units=""in"", width=5, height=5, res=600)"
+"0",""
+"0","plotMA(res1, ylim=c(-5,5), main=""Genes diferencialmente expresados"")"

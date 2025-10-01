@@ -1,0 +1,360 @@
+---
+title: "Curso pre-congreso Inmunoinformática"
+author: "Coordinadores: Dr.Otoniel Rodríguez Jorge, Dra. Linda Aimara Kempis Calanis"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+---
+
+## Librerias a utilizar 
+
+```{r ,warning=FALSE, message=FALSE}
+library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+library(ensembldb)
+library(biomaRt)
+library(gplots)
+library(DESeq2)
+library(pheatmap)
+library(RColorBrewer)
+library(tidyverse)
+library(dplyr)
+library(clusterProfiler)
+library(here)
+```
+
+## Leer el archivo CSV
+
+
+```{r}
+
+# Leer el archivo CSV “countsAdultsReal.csv” que está en la carpeta “datos”
+# Se usa here::here para construir la ruta al archivo de forma robusta dentro del proyecto
+counts <- read.csv(here::here("datos/countsAdultsReal.csv"),row.names = 1)
+# Mostrar las primeras filas del data frame resultante (útil para verificar que se leyó correctamente)
+
+head(counts)
+```
+
+## Crear un Metadata
+
+```{r}
+# Definir el vector “condition” con las condiciones (factores) correspondientes
+# Aquí se usan dos niveles: "Ad SE" y "Ad CD3CD28"
+condition = factor(c("Ad SE","Ad SE", "Ad SE", "Ad CD3CD28","Ad CD3CD28", "Ad CD3CD28"))
+
+# Crear un data.frame “meta” que contendrá esa variable “condition”
+# Se asignan los nombres de fila (row.names) usando los nombres de columnas del objeto counts
+meta <- data.frame(condition, row.names = colnames(counts))
+head(meta)
+
+#Asegurarse de que los nombres de las filas de “meta”
+# coincidan con los nombres de columnas de “counts”
+rownames(meta) == colnames(counts)
+```
+
+## Crear DESeq dataset
+
+**DESeqDataSetFromMatrix(...)**: función del paquete DESeq2 para construir un objeto de análisis diferencial de expresión a partir de una matriz de conteos.
+```{r message=FALSE}
+dds = DESeqDataSetFromMatrix(countData = counts, meta, ~ condition)
+dds <- estimateSizeFactors(dds)
+```
+**estimateSizeFactors(dds)**: función de DESeq2 que calcula los factores de tamaño (size factors) para cada muestra, para normalizar diferencias en la profundidad de secuenciación y composición de RNA.
+
+## Accede al vector de factores de tamaño (size factors)
+
+```{r}
+sizeFactors(dds)
+
+colSums(counts(dds))
+head(counts(dds))
+```
+Esta función accede al vector de factores de tamaño (size factors) que ya ha sido estimado en el objeto dds de tipo DESeqDataSet. 
+
+
+Cada factor de tamaño corresponde a una muestra, y sirve para normalizar diferencias en profundidad de lectura (library size) u otras variaciones sistemáticas entre muestras.
+
+## Conteos totales tras normalización y transformación rlog para análisis exploratorio
+counts(dds, normalized=TRUE): extrae la matriz de conteos ya normalizados del objeto dds. Aquí “normalizados” significa que los conteos crudos han sido divididos por los size factors estimados para las muestras. De esta forma se corrigen (al menos parcialmente) diferencias de profundidad de lectura / biblioteca entre muestras.
+```{r}
+colSums(counts(dds, normalized=T))
+```
+
+rlog(...): es la transformación “log regularizada” de DESeq2. Se usa para transformar los datos (normalizados) al espacio logarítmico, pero agregando un “suavizado” (regularización) para los genes con conteos bajos, de modo que no se disparen las diferencias relativas para valores cercanos a cero. Ayuda a estabilizar la varianza cuando los conteos son bajos.
+
+```{r}
+rld <- rlog (dds, blind=TRUE)
+```
+
+## Plot PCA (análisis de componentes principales).
+
+- En un gráfico PC1 vs PC2 se ven:
+- Cómo se agrupan las muestras (por condición, replicado, lote, etc.).
+- Si hay muestras atípicas (outliers).
+- Qué tan fuerte es la separación entre condiciones en comparación con otras fuentes de variación.
+
+```{r}
+
+plotPCA(rld, intgroup="condition")
+
+```
+
+## Extraer la matriz de datos transformados con rlog desde el objeto rld
+
+```{r}
+rld_mat <- assay(rld)
+```
+- Una vez extraída la matriz rld_mat, puedes utilizarla para:
+
+- Análisis exploratorio: Como la realización de análisis de componentes principales (PCA) o clustering jerárquico para visualizar y explorar las relaciones entre las muestras.
+
+- Visualización: Creación de mapas de calor (heatmaps) para observar la expresión génica entre las muestras.
+
+## Calcular la matriz de correlación entre las muestras
+
+Método de correlación: El coeficiente de Pearson mide la relación lineal entre variables.
+
+```{r}
+rld_cor <- cor(rld_mat)
+
+```
+
+## Plot heatmap
+
+- **pheatmap()** toma como entrada una matriz numérica (por ejemplo, una matriz de expresión génica) y genera un mapa de calor donde:
+
+- Filas: representan las observaciones (por ejemplo, genes).
+
+- Columnas: representan las variables (por ejemplo, muestras).
+
+- Colores: indican la magnitud de los valores en la matriz, facilitando la identificación de patrones y relaciones.
+
+```{r}
+pheatmap(rld_cor)
+
+heat.colors <- brewer.pal(6, "Blues")
+```
+
+```{r}
+
+
+
+pheatmap(rld_cor, color = heat.colors, border_color=NA, fontsize = 10, fontsize_row = 10, height=20)
+
+```
+
+
+## Generar gráfico de dispersión de estimaciones
+
+dds_results <- DESeq(dds): Esta línea ejecuta el análisis de expresión génica diferencial utilizando el objeto dds, que contiene los datos de recuento de las muestras. La función DESeq() realiza varios pasos, incluyendo la normalización de los datos, la estimación de dispersión y el ajuste del modelo.
+
+```{r}
+dds_results <- DESeq(dds)
+
+plotDispEsts(dds_results)
+
+```
+
+
+
+**¿Qué muestra el gráfico de dispersión?**
+
+El gráfico generado por plotDispEsts() presenta:
+
+Puntos negros: Estimaciones de dispersión por gen.
+
+Línea roja: Ajuste de la relación media-dispersión.
+
+Puntos azules: Estimaciones finales de dispersión utilizadas para las pruebas estadísticas.
+
+Este gráfico es útil para evaluar si los datos se ajustan bien al modelo de DESeq2. Se espera que la dispersión disminuya a medida que aumenta la media de los recuentos. Si observas patrones inusuales o dispersión elevada en genes con baja expresión, podría indicar problemas en los datos o la necesidad de ajustar el modelo.
+
+## Generar contraste y aplicar reducción de LFC
+
+```{r}
+## Definir el contraste entre condiciones
+
+contrast <- c("condition","Ad SE","Ad CD3CD28")
+
+## Obtener resultados sin reducción de LFC
+
+res1 <- results(dds_results,contrast = c("condition","Ad SE","Ad CD3CD28"), alpha = 0.05)
+
+
+## Aplicar reducción de LFC para mejorar la estimación
+
+res1 <- lfcShrink(dds_results, contrast = c("condition","Ad SE","Ad CD3CD28"), res=res1, type = "normal")
+
+
+## Resumen de los resultados
+summary(res1)
+```
+
+## Generar gráfico MA para visualizar genes diferencialmente expresados
+
+Este código genera un gráfico MA (log-ratio vs. abundance), que es útil para visualizar resultados de análisis de expresión génica diferencial, típicamente en experimentos de RNA-Seq. Este tipo de gráfico te ayuda a identificar genes que están significativamente sobreexpresados o subexpresados entre dos condiciones.
+
+**plotMA(...):**
+Esta función es de la librería DESeq2 en R. Se usa para crear un gráfico donde:
+
+- El eje x representa la media de la expresión normalizada de cada gen (abundancia).
+
+- El eje y representa el log2 fold change (cambio relativo en expresión entre dos condiciones).
+
+
+```{r}
+
+plotMA(res1, ylim=c(-5,5), main="Genes diferencialmente expresados")
+
+```
+
+## Crear un dataframe
+
+```{r}
+res <- data.frame(res1)
+padj.cutoff <- 0.05
+lfc.cutoff <- 1
+
+```
+
+## Filtrar y guardar genes diferencialmente expresados con LFC ≥ 1
+
+```{r}
+## Convertir los resultados a un tibble y agregar nombres de genes
+
+res_table1 <- res %>% data.frame()%>%rownames_to_column(var="gene") %>% as_tibble()
+
+## Filtrar genes con valor ajustado de p (padj) menor o igual al umbral
+
+sig1_padj<-res %>% filter(padj <=padj.cutoff)
+
+## Filtrar genes con padj < 0.05 y LFC absoluto > 1
+
+sig1 <- res_table1 %>% filter((padj < padj.cutoff) & (abs(log2FoldChange) > lfc.cutoff)) %>% arrange(desc(log2FoldChange))
+
+## Filtrar genes con padj < 0.05 y LFC positivo > 1
+
+sigSE <- res_table1 %>% filter(padj < padj.cutoff & log2FoldChange > lfc.cutoff)
+
+## Filtrar genes con padj < 0.05 y LFC negativo < -1
+
+sigCD3CD28<- res_table1 %>% filter(padj < padj.cutoff & log2FoldChange < -lfc.cutoff)
+
+
+## Mostrar dimensiones de los subconjuntos
+
+dim(sigSE)
+
+dim(sigCD3CD28)
+
+dim(sig1)
+
+## Mostrar las primeras 100 filas de sigCD3CD28
+
+head(sigCD3CD28, n=100)
+
+## Guardar resultados en archivos de texto
+
+write.table(sigSE,file = here("resultados_tablas/Ad_SE.txt"), sep = "\t", col.names = TRUE)
+
+write.table(sigCD3CD28, file= here("resultados_tablas/Ad_CD3CD28.txt"), sep = "\t", col.names = TRUE)
+
+```
+
+## Análisis de enriquecimiento de conjuntos de genes con ClusterProfiler
+
+[**ClusterProfiler**](https://github.com/YuLab-SMU/clusterProfiler)
+
+
+## Librerias parte 2
+
+Si ya tienes una lista de genes diferencialmente expresados (DEGs) en formato de símbolos de genes, puedes utilizar la función bitr() del paquete clusterProfiler para convertir estos identificadores a ENTREZID. Asegúrate de tener cargado el paquete org.Hs.eg.db para acceder a la base de datos de anotación de genes humanos
+
+```{r, message=FALSE, warning=FALSE}
+library(clusterProfiler)
+library(org.Hs.eg.db)
+library(ggplot2)
+#packageDescription("clusterProfiler")
+```
+
+
+- Necesitamos los entrezgenid de las variable
+
+```{r}
+# Convertir símbolos de genes a ENTREZID
+GDE_SE_ENTREZ <- bitr(sigSE$gene, fromType = "SYMBOL", toType = "ENTREZID", OrgDb = org.Hs.eg.db)
+GDE_ES_ENTREZ <- bitr(sigCD3CD28$gene, fromType = "SYMBOL", toType = "ENTREZID", OrgDb = org.Hs.eg.db)
+
+head(GDE_SE_ENTREZ)
+head(GDE_ES_ENTREZ)
+```
+
+```{r}
+SE <-sigSE$gene
+ES <-sigCD3CD28$gene
+GDE_SE = bitr(SE, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Hs.eg.db")
+head(GDE_SE)
+GDE_ES = bitr(ES, fromType="SYMBOL", toType="ENTREZID", OrgDb="org.Hs.eg.db")
+head(GDE_ES)
+GDE_SE_ENTREZ <-GDE_SE$ENTREZID
+GDE_ES_ENTREZ <-GDE_ES$ENTREZID
+```
+
+
+# Análisis de enriquecimiento funcional comparativo con compareCluster
+
+- El paquete clusterProfiler en R ofrece la función compareCluster() para comparar perfiles funcionales de diferentes conjuntos de genes. Esta herramienta es útil para identificar diferencias y similitudes en las funciones biológicas entre distintos grupos de genes, como los genes diferencialmente expresados en diferentes condiciones experimentales.
+
+
+
+
+```{r}
+## Comparar perfiles funcionales de conjuntos de genes mediante análisis de enriquecimiento GO
+mi_lista <- list("SE_ADULTOS" = GDE_SE_ENTREZ, "ES_Adultos" = GDE_ES_ENTREZ)
+
+## Realizar el análisis de enriquecimiento GO para cada conjunto de genes
+ck1 <- compareCluster(geneCluster = mi_lista, fun = "enrichGO", OrgDb = "org.Hs.eg.db", ont = "BP")
+
+## Guardar los resultados en un archivo txt
+
+head(as.data.frame(ck1))  # Mostrar las primeras filas de los resultados
+x <- as.data.frame(ck1)
+write.table(x, file = here("resultados_tablas/listas_enrichGO_PE.txt"), sep = "\t", col.names = TRUE)
+head(ck1)  # Ver los resultados en una ventana interactiva
+
+## Visualizar los resultados mediante un gráfico de puntos
+
+dotplot(ck1, showCategory = 10, font.size = 10.5) + ggtitle("Análisis de enriquecimiento funcional")
+
+```
+
+## Volcano plot
+
+[**EnhancedVolcano**](https://bioconductor.org/packages/devel/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html)
+
+- Un volcano plot es una herramienta visual utilizada en análisis de expresión diferencial para representar la relación entre la magnitud del cambio (fold change) y la significancia estadística (valor p) de cada gen. En este gráfico:
+
+- El eje x muestra el log₂ del fold change (log₂FC), indicando la magnitud del cambio en la expresión génica entre dos condiciones.
+
+- El eje y muestra el valor p ajustado o el valor p negativo logaritmado (-log₁₀(p)), representando la significancia estadística del cambio observado.
+
+- Los puntos en las esquinas superiores del gráfico suelen representar genes que son tanto estadísticamente significativos como biológicamente relevantes, es decir, aquellos con un gran cambio en la expresión y un valor p bajo.
+
+```{r,warning=FALSE, message=FALSE}
+library(EnhancedVolcano)
+
+# Generar el volcano plot
+
+EnhancedVolcano(res1,
+    lab = rownames(res1),
+    x = 'log2FoldChange',
+    y = 'pvalue')
+
+```
+
+
+
+## Referencias
+[Deseq2](https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)

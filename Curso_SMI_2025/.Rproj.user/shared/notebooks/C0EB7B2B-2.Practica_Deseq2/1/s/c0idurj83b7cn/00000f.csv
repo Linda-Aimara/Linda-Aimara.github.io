@@ -1,0 +1,4 @@
+"0","res <- data.frame(res1)"
+"0","padj.cutoff <- 0.05"
+"0","lfc.cutoff <- 1"
+"0","lfc_0<-0"

@@ -1,0 +1,5 @@
+"0","png(here(""imagenes/test.png""), units=""in"", width=5, height=5, res=600)"
+"0",""
+"0","plotPCA(rld, intgroup=""condition"")"
+"2","using ntop=500 top features by variance
+"

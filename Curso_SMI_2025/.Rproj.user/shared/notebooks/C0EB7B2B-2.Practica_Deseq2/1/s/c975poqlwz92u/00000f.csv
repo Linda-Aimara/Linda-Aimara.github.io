@@ -1,0 +1,2 @@
+"0","dds = DESeqDataSetFromMatrix(countData = counts, meta, ~ condition)"
+"0","dds <- estimateSizeFactors(dds)"

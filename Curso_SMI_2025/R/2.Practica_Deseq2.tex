@@ -1,0 +1,964 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Curso pre-congreso Inmunoinformática},
+  pdfauthor={Coordinadores: Dr.Otoniel Rodríguez Jorge Dra. Linda Aimara Kempis Calanis},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Curso pre-congreso Inmunoinformática}
+\author{Coordinadores: Dr.Otoniel Rodríguez Jorge Dra. Linda Aimara
+Kempis Calanis}
+\date{2025-09-26}
+
+\begin{document}
+\maketitle
+
+\hypertarget{librerias-a-utilizar}{%
+\subsection{Librerias a utilizar}\label{librerias-a-utilizar}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(TxDb.Hsapiens.UCSC.hg38.knownGene)}
+\FunctionTok{library}\NormalTok{(ensembldb)}
+\FunctionTok{library}\NormalTok{(biomaRt)}
+\FunctionTok{library}\NormalTok{(gplots)}
+\FunctionTok{library}\NormalTok{(DESeq2)}
+\FunctionTok{library}\NormalTok{(pheatmap)}
+\FunctionTok{library}\NormalTok{(RColorBrewer)}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(clusterProfiler)}
+\FunctionTok{library}\NormalTok{(here)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{leer-el-archivo-csv}{%
+\subsection{Leer el archivo CSV}\label{leer-el-archivo-csv}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Leer el archivo CSV “countsAdultsReal.csv” que está en la carpeta “datos”}
+\CommentTok{\# Se usa here::here para construir la ruta al archivo de forma robusta dentro del proyecto}
+\NormalTok{counts }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(here}\SpecialCharTok{::}\FunctionTok{here}\NormalTok{(}\StringTok{"datos/countsAdultsReal.csv"}\NormalTok{),}\AttributeTok{row.names =} \DecValTok{1}\NormalTok{)}
+\CommentTok{\# Mostrar las primeras filas del data frame resultante (útil para verificar que se leyó correctamente)}
+
+\FunctionTok{head}\NormalTok{(counts)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             Ad1 Ad2 Ad3 Ad1.CD3CD28 Ad2.CD3CD28 Ad3.CD3CD28
+## XLOC_000028   4   2   8           1           5           2
+## XLOC_000043  40  40  38          22          30          34
+## XLOC_000047   7   4   2           2           5           0
+## XLOC_000055   0   0   0           0           0           0
+## XLOC_000060  50  40  59          28          31          53
+## XLOC_000061   5   5   5           4           6           7
+\end{verbatim}
+
+\hypertarget{crear-un-metadata}{%
+\subsection{Crear un Metadata}\label{crear-un-metadata}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Definir el vector “condition” con las condiciones (factores) correspondientes}
+\CommentTok{\# Aquí se usan dos niveles: "Ad SE" y "Ad CD3CD28"}
+\NormalTok{condition }\OtherTok{=} \FunctionTok{factor}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"Ad SE"}\NormalTok{,}\StringTok{"Ad SE"}\NormalTok{, }\StringTok{"Ad SE"}\NormalTok{, }\StringTok{"Ad CD3CD28"}\NormalTok{,}\StringTok{"Ad CD3CD28"}\NormalTok{, }\StringTok{"Ad CD3CD28"}\NormalTok{))}
+
+\CommentTok{\# Crear un data.frame “meta” que contendrá esa variable “condition”}
+\CommentTok{\# Se asignan los nombres de fila (row.names) usando los nombres de columnas del objeto counts}
+\NormalTok{meta }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(condition, }\AttributeTok{row.names =} \FunctionTok{colnames}\NormalTok{(counts))}
+\FunctionTok{head}\NormalTok{(meta)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              condition
+## Ad1              Ad SE
+## Ad2              Ad SE
+## Ad3              Ad SE
+## Ad1.CD3CD28 Ad CD3CD28
+## Ad2.CD3CD28 Ad CD3CD28
+## Ad3.CD3CD28 Ad CD3CD28
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Asegurarse de que los nombres de las filas de “meta”}
+\CommentTok{\# coincidan con los nombres de columnas de “counts”}
+\FunctionTok{rownames}\NormalTok{(meta) }\SpecialCharTok{==} \FunctionTok{colnames}\NormalTok{(counts)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE TRUE TRUE TRUE TRUE TRUE
+\end{verbatim}
+
+\hypertarget{crear-deseq-dataset}{%
+\subsection{Crear DESeq dataset}\label{crear-deseq-dataset}}
+
+\textbf{DESeqDataSetFromMatrix(\ldots)}: función del paquete DESeq2 para
+construir un objeto de análisis diferencial de expresión a partir de una
+matriz de conteos.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dds }\OtherTok{=} \FunctionTok{DESeqDataSetFromMatrix}\NormalTok{(}\AttributeTok{countData =}\NormalTok{ counts, meta, }\SpecialCharTok{\textasciitilde{}}\NormalTok{ condition)}
+\NormalTok{dds }\OtherTok{\textless{}{-}} \FunctionTok{estimateSizeFactors}\NormalTok{(dds)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{estimateSizeFactors(dds)}: función de DESeq2 que calcula los
+factores de tamaño (size factors) para cada muestra, para normalizar
+diferencias en la profundidad de secuenciación y composición de RNA.
+
+\hypertarget{accede-al-vector-de-factores-de-tamauxf1o-size-factors}{%
+\subsection{Accede al vector de factores de tamaño (size
+factors)}\label{accede-al-vector-de-factores-de-tamauxf1o-size-factors}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sizeFactors}\NormalTok{(dds)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Ad1         Ad2         Ad3 Ad1.CD3CD28 Ad2.CD3CD28 Ad3.CD3CD28 
+##   1.1561037   0.8907342   0.9627618   0.8908897   1.1851996   0.9805609
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{colSums}\NormalTok{(}\FunctionTok{counts}\NormalTok{(dds))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Ad1         Ad2         Ad3 Ad1.CD3CD28 Ad2.CD3CD28 Ad3.CD3CD28 
+##    26907284    20612097    21921890    20990919    27729938    25010233
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(}\FunctionTok{counts}\NormalTok{(dds))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             Ad1 Ad2 Ad3 Ad1.CD3CD28 Ad2.CD3CD28 Ad3.CD3CD28
+## XLOC_000028   4   2   8           1           5           2
+## XLOC_000043  40  40  38          22          30          34
+## XLOC_000047   7   4   2           2           5           0
+## XLOC_000055   0   0   0           0           0           0
+## XLOC_000060  50  40  59          28          31          53
+## XLOC_000061   5   5   5           4           6           7
+\end{verbatim}
+
+Esta función accede al vector de factores de tamaño (size factors) que
+ya ha sido estimado en el objeto dds de tipo DESeqDataSet.
+
+Cada factor de tamaño corresponde a una muestra, y sirve para normalizar
+diferencias en profundidad de lectura (library size) u otras variaciones
+sistemáticas entre muestras.
+
+\hypertarget{conteos-totales-tras-normalizaciuxf3n-y-transformaciuxf3n-rlog-para-anuxe1lisis-exploratorio}{%
+\subsection{Conteos totales tras normalización y transformación rlog
+para análisis
+exploratorio}\label{conteos-totales-tras-normalizaciuxf3n-y-transformaciuxf3n-rlog-para-anuxe1lisis-exploratorio}}
+
+counts(dds, normalized=TRUE): extrae la matriz de conteos ya
+normalizados del objeto dds. Aquí ``normalizados'' significa que los
+conteos crudos han sido divididos por los size factors estimados para
+las muestras. De esta forma se corrigen (al menos parcialmente)
+diferencias de profundidad de lectura / biblioteca entre muestras.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{colSums}\NormalTok{(}\FunctionTok{counts}\NormalTok{(dds, }\AttributeTok{normalized=}\NormalTok{T))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Ad1         Ad2         Ad3 Ad1.CD3CD28 Ad2.CD3CD28 Ad3.CD3CD28 
+##    23274108    23140570    22769796    23561749    23396851    25506047
+\end{verbatim}
+
+rlog(\ldots): es la transformación ``log regularizada'' de DESeq2. Se
+usa para transformar los datos (normalizados) al espacio logarítmico,
+pero agregando un ``suavizado'' (regularización) para los genes con
+conteos bajos, de modo que no se disparen las diferencias relativas para
+valores cercanos a cero. Ayuda a estabilizar la varianza cuando los
+conteos son bajos.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rld }\OtherTok{\textless{}{-}} \FunctionTok{rlog}\NormalTok{ (dds, }\AttributeTok{blind=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{plot-pca-anuxe1lisis-de-componentes-principales.}{%
+\subsection{Plot PCA (análisis de componentes
+principales).}\label{plot-pca-anuxe1lisis-de-componentes-principales.}}
+
+\begin{itemize}
+\tightlist
+\item
+  En un gráfico PC1 vs PC2 se ven:
+\item
+  Cómo se agrupan las muestras (por condición, replicado, lote, etc.).
+\item
+  Si hay muestras atípicas (outliers).
+\item
+  Qué tan fuerte es la separación entre condiciones en comparación con
+  otras fuentes de variación.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plotPCA}\NormalTok{(rld, }\AttributeTok{intgroup=}\StringTok{"condition"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## using ntop=500 top features by variance
+\end{verbatim}
+
+\includegraphics{2.Practica_Deseq2_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\hypertarget{extraer-la-matriz-de-datos-transformados-con-rlog-desde-el-objeto-rld}{%
+\subsection{Extraer la matriz de datos transformados con rlog desde el
+objeto
+rld}\label{extraer-la-matriz-de-datos-transformados-con-rlog-desde-el-objeto-rld}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rld\_mat }\OtherTok{\textless{}{-}} \FunctionTok{assay}\NormalTok{(rld)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\item
+  Una vez extraída la matriz rld\_mat, puedes utilizarla para:
+\item
+  Análisis exploratorio: Como la realización de análisis de componentes
+  principales (PCA) o clustering jerárquico para visualizar y explorar
+  las relaciones entre las muestras.
+\item
+  Visualización: Creación de mapas de calor (heatmaps) para observar la
+  expresión génica entre las muestras.
+\end{itemize}
+
+\hypertarget{calcular-la-matriz-de-correlaciuxf3n-entre-las-muestras}{%
+\subsection{Calcular la matriz de correlación entre las
+muestras}\label{calcular-la-matriz-de-correlaciuxf3n-entre-las-muestras}}
+
+Método de correlación: El coeficiente de Pearson mide la relación lineal
+entre variables.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rld\_cor }\OtherTok{\textless{}{-}} \FunctionTok{cor}\NormalTok{(rld\_mat)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{plot-heatmap}{%
+\subsection{Plot heatmap}\label{plot-heatmap}}
+
+\begin{itemize}
+\item
+  \textbf{pheatmap()} toma como entrada una matriz numérica (por
+  ejemplo, una matriz de expresión génica) y genera un mapa de calor
+  donde:
+\item
+  Filas: representan las observaciones (por ejemplo, genes).
+\item
+  Columnas: representan las variables (por ejemplo, muestras).
+\item
+  Colores: indican la magnitud de los valores en la matriz, facilitando
+  la identificación de patrones y relaciones.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{pheatmap}\NormalTok{(rld\_cor)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2.Practica_Deseq2_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{heat.colors }\OtherTok{\textless{}{-}} \FunctionTok{brewer.pal}\NormalTok{(}\DecValTok{6}\NormalTok{, }\StringTok{"Blues"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{pheatmap}\NormalTok{(rld\_cor, }\AttributeTok{color =}\NormalTok{ heat.colors, }\AttributeTok{border\_color=}\ConstantTok{NA}\NormalTok{, }\AttributeTok{fontsize =} \DecValTok{10}\NormalTok{, }\AttributeTok{fontsize\_row =} \DecValTok{10}\NormalTok{, }\AttributeTok{height=}\DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2.Practica_Deseq2_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\hypertarget{generar-gruxe1fico-de-dispersiuxf3n-de-estimaciones}{%
+\subsection{Generar gráfico de dispersión de
+estimaciones}\label{generar-gruxe1fico-de-dispersiuxf3n-de-estimaciones}}
+
+dds\_results \textless- DESeq(dds): Esta línea ejecuta el análisis de
+expresión génica diferencial utilizando el objeto dds, que contiene los
+datos de recuento de las muestras. La función DESeq() realiza varios
+pasos, incluyendo la normalización de los datos, la estimación de
+dispersión y el ajuste del modelo.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dds\_results }\OtherTok{\textless{}{-}} \FunctionTok{DESeq}\NormalTok{(dds)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## using pre-existing size factors
+\end{verbatim}
+
+\begin{verbatim}
+## estimating dispersions
+\end{verbatim}
+
+\begin{verbatim}
+## gene-wise dispersion estimates
+\end{verbatim}
+
+\begin{verbatim}
+## mean-dispersion relationship
+\end{verbatim}
+
+\begin{verbatim}
+##   Note: levels of factors in the design contain characters other than
+##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
+##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
+##   for column names in R. [This is a message, not a warning or an error]
+\end{verbatim}
+
+\begin{verbatim}
+## final dispersion estimates
+\end{verbatim}
+
+\begin{verbatim}
+## fitting model and testing
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plotDispEsts}\NormalTok{(dds\_results)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2.Practica_Deseq2_files/figure-latex/unnamed-chunk-13-1.pdf}
+¿Qué muestra el gráfico de dispersión?
+
+El gráfico generado por plotDispEsts() presenta:
+
+Puntos negros: Estimaciones de dispersión por gen.
+
+Línea roja: Ajuste de la relación media-dispersión.
+
+Puntos azules: Estimaciones finales de dispersión utilizadas para las
+pruebas estadísticas.
+
+Este gráfico es útil para evaluar si los datos se ajustan bien al modelo
+de DESeq2. Se espera que la dispersión disminuya a medida que aumenta la
+media de los recuentos. Si observas patrones inusuales o dispersión
+elevada en genes con baja expresión, podría indicar problemas en los
+datos o la necesidad de ajustar el modelo.
+
+\hypertarget{generar-contraste-y-aplicar-reducciuxf3n-de-lfc}{%
+\subsection{Generar contraste y aplicar reducción de
+LFC}\label{generar-contraste-y-aplicar-reducciuxf3n-de-lfc}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Definir el contraste entre condiciones}
+
+\NormalTok{contrast }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"condition"}\NormalTok{,}\StringTok{"Ad SE"}\NormalTok{,}\StringTok{"Ad CD3CD28"}\NormalTok{)}
+
+\DocumentationTok{\#\# Obtener resultados sin reducción de LFC}
+
+\NormalTok{res1 }\OtherTok{\textless{}{-}} \FunctionTok{results}\NormalTok{(dds\_results,}\AttributeTok{contrast =} \FunctionTok{c}\NormalTok{(}\StringTok{"condition"}\NormalTok{,}\StringTok{"Ad SE"}\NormalTok{,}\StringTok{"Ad CD3CD28"}\NormalTok{), }\AttributeTok{alpha =} \FloatTok{0.05}\NormalTok{)}
+
+
+\DocumentationTok{\#\# Aplicar reducción de LFC para mejorar la estimación}
+
+\NormalTok{res1 }\OtherTok{\textless{}{-}} \FunctionTok{lfcShrink}\NormalTok{(dds\_results, }\AttributeTok{contrast =} \FunctionTok{c}\NormalTok{(}\StringTok{"condition"}\NormalTok{,}\StringTok{"Ad SE"}\NormalTok{,}\StringTok{"Ad CD3CD28"}\NormalTok{), }\AttributeTok{res=}\NormalTok{res1, }\AttributeTok{type =} \StringTok{"normal"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## using 'normal' for LFC shrinkage, the Normal prior from Love et al (2014).
+## 
+## Note that type='apeglm' and type='ashr' have shown to have less bias than type='normal'.
+## See ?lfcShrink for more details on shrinkage type, and the DESeq2 vignette.
+## Reference: https://doi.org/10.1093/bioinformatics/bty895
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Resumen de los resultados}
+\FunctionTok{summary}\NormalTok{(res1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## out of 32558 with nonzero total read count
+## adjusted p-value < 0.05
+## LFC > 0 (up)       : 1992, 6.1%
+## LFC < 0 (down)     : 3126, 9.6%
+## outliers [1]       : 15, 0.046%
+## low counts [2]     : 13155, 40%
+## (mean count < 4)
+## [1] see 'cooksCutoff' argument of ?results
+## [2] see 'independentFiltering' argument of ?results
+\end{verbatim}
+
+\hypertarget{generar-gruxe1fico-ma-para-visualizar-genes-diferencialmente-expresados}{%
+\subsection{Generar gráfico MA para visualizar genes diferencialmente
+expresados}\label{generar-gruxe1fico-ma-para-visualizar-genes-diferencialmente-expresados}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plotMA}\NormalTok{(res1, }\AttributeTok{ylim=}\FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{5}\NormalTok{,}\DecValTok{5}\NormalTok{), }\AttributeTok{main=}\StringTok{"Genes diferencialmente expresados"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2.Practica_Deseq2_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\hypertarget{crear-un-dataframe}{%
+\subsection{Crear un dataframe}\label{crear-un-dataframe}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{res }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(res1)}
+\NormalTok{padj.cutoff }\OtherTok{\textless{}{-}} \FloatTok{0.05}
+\NormalTok{lfc.cutoff }\OtherTok{\textless{}{-}} \DecValTok{1}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{filtrar-y-guardar-genes-diferencialmente-expresados-con-lfc-1}{%
+\subsection{Filtrar y guardar genes diferencialmente expresados con LFC
+≥
+1}\label{filtrar-y-guardar-genes-diferencialmente-expresados-con-lfc-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Convertir los resultados a un tibble y agregar nombres de genes}
+
+\NormalTok{res\_table1 }\OtherTok{\textless{}{-}}\NormalTok{ res }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{data.frame}\NormalTok{()}\SpecialCharTok{\%\textgreater{}\%}\FunctionTok{rownames\_to\_column}\NormalTok{(}\AttributeTok{var=}\StringTok{"gene"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{as\_tibble}\NormalTok{()}
+
+\DocumentationTok{\#\# Filtrar genes con valor ajustado de p (padj) menor o igual al umbral}
+
+\NormalTok{sig1\_padj}\OtherTok{\textless{}{-}}\NormalTok{res }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(padj }\SpecialCharTok{\textless{}=}\NormalTok{padj.cutoff)}
+
+\DocumentationTok{\#\# Filtrar genes con padj \textless{} 0.05 y LFC absoluto \textgreater{} 1}
+
+\NormalTok{sig1 }\OtherTok{\textless{}{-}}\NormalTok{ res\_table1 }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{((padj }\SpecialCharTok{\textless{}}\NormalTok{ padj.cutoff) }\SpecialCharTok{\&}\NormalTok{ (}\FunctionTok{abs}\NormalTok{(log2FoldChange) }\SpecialCharTok{\textgreater{}}\NormalTok{ lfc.cutoff)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(log2FoldChange))}
+
+\DocumentationTok{\#\# Filtrar genes con padj \textless{} 0.05 y LFC positivo \textgreater{} 1}
+
+\NormalTok{sigA }\OtherTok{\textless{}{-}}\NormalTok{ res\_table1 }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(padj }\SpecialCharTok{\textless{}}\NormalTok{ padj.cutoff }\SpecialCharTok{\&}\NormalTok{ log2FoldChange }\SpecialCharTok{\textgreater{}}\NormalTok{ lfc.cutoff)}
+
+\DocumentationTok{\#\# Filtrar genes con padj \textless{} 0.05 y LFC negativo \textless{} {-}1}
+
+\NormalTok{sigCD3CD28}\OtherTok{\textless{}{-}}\NormalTok{ res\_table1 }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(padj }\SpecialCharTok{\textless{}}\NormalTok{ padj.cutoff }\SpecialCharTok{\&}\NormalTok{ log2FoldChange }\SpecialCharTok{\textless{}} \SpecialCharTok{{-}}\NormalTok{lfc.cutoff)}
+
+
+\DocumentationTok{\#\# Mostrar dimensiones de los subconjuntos}
+
+\FunctionTok{dim}\NormalTok{(sigA)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 522   7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dim}\NormalTok{(sigCD3CD28)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1433    7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{dim}\NormalTok{(sig1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1955    7
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Mostrar las primeras 100 filas de sigCD3CD28}
+
+\FunctionTok{head}\NormalTok{(sigCD3CD28, }\AttributeTok{n=}\DecValTok{100}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 100 x 7
+##    gene        baseMean log2FoldChange lfcSE  stat       pvalue        padj
+##    <chr>          <dbl>          <dbl> <dbl> <dbl>        <dbl>       <dbl>
+##  1 XLOC_000986     8.09          -1.55 0.535 -2.83 0.00469      0.0212     
+##  2 XLOC_000988     5.97          -1.93 0.553 -3.33 0.000882     0.00504    
+##  3 XLOC_002947     5.39          -1.57 0.552 -2.73 0.00637      0.0274     
+##  4 XLOC_003913    34.7           -2.37 0.423 -5.49 0.0000000408 0.000000613
+##  5 XLOC_003921     7.41          -2.39 0.553 -4.33 0.0000151    0.000137   
+##  6 XLOC_004229    13.9           -1.36 0.495 -2.71 0.00664      0.0283     
+##  7 XLOC_006357     3.72          -1.40 0.545 -2.64 0.00826      0.0342     
+##  8 XLOC_006358    25.0           -1.68 0.423 -3.92 0.0000884    0.000666   
+##  9 XLOC_006572     4.82          -1.69 0.550 -3.01 0.00262      0.0128     
+## 10 XLOC_007590    48.5           -1.58 0.414 -3.79 0.000148     0.00106    
+## # i 90 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Guardar resultados en archivos de texto}
+
+\FunctionTok{write.table}\NormalTok{(sigA,}\AttributeTok{file =} \FunctionTok{here}\NormalTok{(}\StringTok{"resultados\_tablas/Ad\_SE.txt"}\NormalTok{), }\AttributeTok{sep =} \StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\AttributeTok{col.names =} \ConstantTok{TRUE}\NormalTok{)}
+
+\FunctionTok{write.table}\NormalTok{(sigCD3CD28, }\AttributeTok{file=} \FunctionTok{here}\NormalTok{(}\StringTok{"resultados\_tablas/Ad\_CD3CD28.txt"}\NormalTok{), }\AttributeTok{sep =} \StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\AttributeTok{col.names =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{anuxe1lisis-de-enriquecimiento-de-conjuntos-de-genes-con-clusterprofiler}{%
+\subsection{Análisis de enriquecimiento de conjuntos de genes con
+ClusterProfiler}\label{anuxe1lisis-de-enriquecimiento-de-conjuntos-de-genes-con-clusterprofiler}}
+
+\href{https://github.com/YuLab-SMU/clusterProfiler}{\textbf{ClusterProfiler}}
+
+\hypertarget{librerias-parte-2}{%
+\subsection{Librerias parte 2}\label{librerias-parte-2}}
+
+Si ya tienes una lista de genes diferencialmente expresados (DEGs) en
+formato de símbolos de genes, puedes utilizar la función bitr() del
+paquete clusterProfiler para convertir estos identificadores a ENTREZID.
+Asegúrate de tener cargado el paquete org.Hs.eg.db para acceder a la
+base de datos de anotación de genes humanos
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(clusterProfiler)}
+\FunctionTok{library}\NormalTok{(org.Hs.eg.db)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\CommentTok{\#packageDescription("clusterProfiler")}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Necesitamos los entrezgenid de las variable
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Convertir símbolos de genes a ENTREZID}
+\NormalTok{GDE\_SE\_ENTREZ }\OtherTok{\textless{}{-}} \FunctionTok{bitr}\NormalTok{(sigA}\SpecialCharTok{$}\NormalTok{gene, }\AttributeTok{fromType =} \StringTok{"SYMBOL"}\NormalTok{, }\AttributeTok{toType =} \StringTok{"ENTREZID"}\NormalTok{, }\AttributeTok{OrgDb =}\NormalTok{ org.Hs.eg.db)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'select()' returned 1:1 mapping between keys and columns
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bitr(sigA$gene, fromType = "SYMBOL", toType = "ENTREZID", OrgDb =
+## org.Hs.eg.db): 31.23% of input gene IDs are fail to map...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{GDE\_ES\_ENTREZ }\OtherTok{\textless{}{-}} \FunctionTok{bitr}\NormalTok{(sigCD3CD28}\SpecialCharTok{$}\NormalTok{gene, }\AttributeTok{fromType =} \StringTok{"SYMBOL"}\NormalTok{, }\AttributeTok{toType =} \StringTok{"ENTREZID"}\NormalTok{, }\AttributeTok{OrgDb =}\NormalTok{ org.Hs.eg.db)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'select()' returned 1:1 mapping between keys and columns
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bitr(sigCD3CD28$gene, fromType = "SYMBOL", toType = "ENTREZID", :
+## 11.17% of input gene IDs are fail to map...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(GDE\_SE\_ENTREZ)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     SYMBOL ENTREZID
+## 72  TAS1R3    83756
+## 73   MXRA8    54587
+## 74   MEGF6     1953
+## 75   AJAP1    55966
+## 78 LDLRAP1    26119
+## 79  CRYBG2    55057
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(GDE\_ES\_ENTREZ)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      SYMBOL ENTREZID
+## 45 TNFRSF18     8784
+## 46  TNFRSF4     7293
+## 47   ATAD3A    55210
+## 48 TNFRSF14     8764
+## 49     TP73     7161
+## 50   RNF207   388591
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{SE }\OtherTok{\textless{}{-}}\NormalTok{sigA}\SpecialCharTok{$}\NormalTok{gene}
+\NormalTok{ES }\OtherTok{\textless{}{-}}\NormalTok{sigCD3CD28}\SpecialCharTok{$}\NormalTok{gene}
+\NormalTok{GDE\_SE }\OtherTok{=} \FunctionTok{bitr}\NormalTok{(SE, }\AttributeTok{fromType=}\StringTok{"SYMBOL"}\NormalTok{, }\AttributeTok{toType=}\StringTok{"ENTREZID"}\NormalTok{, }\AttributeTok{OrgDb=}\StringTok{"org.Hs.eg.db"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'select()' returned 1:1 mapping between keys and columns
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bitr(SE, fromType = "SYMBOL", toType = "ENTREZID", OrgDb =
+## "org.Hs.eg.db"): 31.23% of input gene IDs are fail to map...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(GDE\_SE)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     SYMBOL ENTREZID
+## 72  TAS1R3    83756
+## 73   MXRA8    54587
+## 74   MEGF6     1953
+## 75   AJAP1    55966
+## 78 LDLRAP1    26119
+## 79  CRYBG2    55057
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{GDE\_ES }\OtherTok{=} \FunctionTok{bitr}\NormalTok{(ES, }\AttributeTok{fromType=}\StringTok{"SYMBOL"}\NormalTok{, }\AttributeTok{toType=}\StringTok{"ENTREZID"}\NormalTok{, }\AttributeTok{OrgDb=}\StringTok{"org.Hs.eg.db"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'select()' returned 1:1 mapping between keys and columns
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in bitr(ES, fromType = "SYMBOL", toType = "ENTREZID", OrgDb =
+## "org.Hs.eg.db"): 11.17% of input gene IDs are fail to map...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(GDE\_ES)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      SYMBOL ENTREZID
+## 45 TNFRSF18     8784
+## 46  TNFRSF4     7293
+## 47   ATAD3A    55210
+## 48 TNFRSF14     8764
+## 49     TP73     7161
+## 50   RNF207   388591
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{GDE\_SE\_ENTREZ }\OtherTok{\textless{}{-}}\NormalTok{GDE\_SE}\SpecialCharTok{$}\NormalTok{ENTREZID}
+\NormalTok{GDE\_ES\_ENTREZ }\OtherTok{\textless{}{-}}\NormalTok{GDE\_ES}\SpecialCharTok{$}\NormalTok{ENTREZID}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{anuxe1lisis-de-enriquecimiento-funcional-comparativo-con-comparecluster}{%
+\section{Análisis de enriquecimiento funcional comparativo con
+compareCluster}\label{anuxe1lisis-de-enriquecimiento-funcional-comparativo-con-comparecluster}}
+
+\begin{itemize}
+\tightlist
+\item
+  El paquete clusterProfiler en R ofrece la función compareCluster()
+  para comparar perfiles funcionales de diferentes conjuntos de genes.
+  Esta herramienta es útil para identificar diferencias y similitudes en
+  las funciones biológicas entre distintos grupos de genes, como los
+  genes diferencialmente expresados en diferentes condiciones
+  experimentales.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Comparar perfiles funcionales de conjuntos de genes mediante análisis de enriquecimiento GO}
+\NormalTok{mi\_lista }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\StringTok{"SE\_ADULTOS"} \OtherTok{=}\NormalTok{ GDE\_SE\_ENTREZ, }\StringTok{"ES\_Adultos"} \OtherTok{=}\NormalTok{ GDE\_ES\_ENTREZ)}
+
+\DocumentationTok{\#\# Realizar el análisis de enriquecimiento GO para cada conjunto de genes}
+\NormalTok{ck1 }\OtherTok{\textless{}{-}} \FunctionTok{compareCluster}\NormalTok{(}\AttributeTok{geneCluster =}\NormalTok{ mi\_lista, }\AttributeTok{fun =} \StringTok{"enrichGO"}\NormalTok{, }\AttributeTok{OrgDb =} \StringTok{"org.Hs.eg.db"}\NormalTok{, }\AttributeTok{ont =} \StringTok{"BP"}\NormalTok{)}
+
+\DocumentationTok{\#\# Guardar los resultados en un archivo PDF}
+
+\FunctionTok{head}\NormalTok{(}\FunctionTok{as.data.frame}\NormalTok{(ck1))  }\CommentTok{\# Mostrar las primeras filas de los resultados}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Cluster         ID                               Description GeneRatio
+## 1 SE_ADULTOS GO:0061448             connective tissue development    18/293
+## 2 ES_Adultos GO:0006260                           DNA replication   79/1136
+## 3 ES_Adultos GO:0006261             DNA-templated DNA replication   60/1136
+## 4 ES_Adultos GO:0007059                    chromosome segregation   97/1136
+## 5 ES_Adultos GO:0000280                          nuclear division   93/1136
+## 6 ES_Adultos GO:1901987 regulation of cell cycle phase transition   94/1136
+##     BgRatio       pvalue     p.adjust       qvalue
+## 1 285/18870 5.491646e-07 1.877594e-03 1.706457e-03
+## 2 278/18870 1.895580e-32 9.868245e-29 7.689187e-29
+## 3 161/18870 3.709867e-32 9.868245e-29 7.689187e-29
+## 4 424/18870 3.360736e-31 5.959706e-28 4.643712e-28
+## 5 441/18870 4.315619e-27 5.739773e-24 4.472344e-24
+## 6 456/18870 1.368659e-26 1.456254e-23 1.134691e-23
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     geneID
+## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                            4774/3570/57326/8609/7476/5593/7045/1302/5467/55790/6653/7480/30812/7067/9241/8313/5155/89766
+## 2                                                                                                                             378708/4678/4998/51514/6241/348654/4175/580/10293/10721/4171/5984/604/890/51053/3159/4172/5558/253714/6119/5982/4176/157570/84296/4173/9134/79075/4796/9401/80010/6240/79733/374393/2237/23649/10714/1111/55388/983/1763/5763/57379/1017/8914/144455/5985/8099/675/5983/5427/11169/5888/1854/9768/80119/54962/90381/641/116028/23594/64785/51659/81620/79915/990/672/146956/7083/10189/201254/5932/10036/4784/898/10856/8318/4174/29980/8208
+## 3                                                                                                                                                                                                                                     378708/4998/348654/4175/580/10293/10721/4171/5984/604/51053/3159/4172/5558/253714/5982/4176/84296/4173/9134/79075/4796/9401/6240/79733/2237/23649/10714/55388/1763/57379/1017/8914/144455/5985/8099/675/5983/5427/11169/5888/54962/90381/641/23594/64785/51659/81620/79915/990/672/146956/7083/10189/201254/5932/898/8318/4174/29980
+## 4 378708/55143/991/11004/6491/84722/83540/259266/9928/4751/1063/348654/79172/23397/699/57405/51776/57520/151246/55355/151648/4292/5359/10051/1894/64151/1062/4085/84057/79682/9319/891/64946/9232/203068/3833/55166/7272/387103/54892/157313/157570/2669/9134/401541/10592/10783/81930/113130/11130/983/3832/4288/29127/9700/79023/9735/5901/221150/440145/9787/8110/7517/701/90417/57082/11339/51203/9133/55055/9493/9055/116028/5347/55839/81620/83903/9212/10615/990/7153/29893/7283/672/146909/3837/348235/83990/332/201254/10403/220134/147841/256126/898/11144/79019
+## 5                                        378708/2827/55143/991/11004/8438/84722/83540/259266/9928/4751/1063/348654/23397/699/57405/151648/4292/10051/64151/1062/4085/84057/9319/891/995/9232/7124/3833/7272/54443/54892/157313/9134/286151/80010/1164/10592/81930/113130/1111/84930/11130/983/3832/4288/10635/29127/9700/3479/9735/5901/675/440145/10419/9787/3306/7517/701/90417/57082/5888/51203/9133/55055/9493/9055/9088/5347/55512/81620/2175/83903/9212/10615/7153/29893/7283/146909/3837/146956/83990/8877/332/201254/10403/147841/256126/898/27338/5902/3976/11144
+## 6                                                            26270/63967/55143/991/6491/1031/4998/4582/83540/9928/8444/25896/51514/1063/3398/6241/348654/699/57405/51776/57520/580/993/83666/151636/1062/4085/9319/7015/891/995/8870/1026/7272/54443/1021/2146/1029/10783/6240/7465/113130/595/5962/1111/11130/983/1763/894/9700/1017/79035/8914/1019/144455/9735/675/7027/5720/5721/9787/4331/3306/8110/7517/701/57082/5888/79968/54962/55055/1543/90381/641/9088/5347/81620/83903/9212/79915/990/672/146956/83990/332/10403/5932/596/147841/25959/22809/8318/51512/29980
+##   Count
+## 1    18
+## 2    79
+## 3    60
+## 4    97
+## 5    93
+## 6    94
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(ck1)}
+\FunctionTok{write.table}\NormalTok{(x, }\AttributeTok{file =} \FunctionTok{here}\NormalTok{(}\StringTok{"resultados\_tablas/listas\_enrichGO\_PE.txt"}\NormalTok{), }\AttributeTok{sep =} \StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\AttributeTok{col.names =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(ck1)  }\CommentTok{\# Ver los resultados en una ventana interactiva}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Cluster         ID                               Description GeneRatio
+## 1 SE_ADULTOS GO:0061448             connective tissue development    18/293
+## 2 ES_Adultos GO:0006260                           DNA replication   79/1136
+## 3 ES_Adultos GO:0006261             DNA-templated DNA replication   60/1136
+## 4 ES_Adultos GO:0007059                    chromosome segregation   97/1136
+## 5 ES_Adultos GO:0000280                          nuclear division   93/1136
+## 6 ES_Adultos GO:1901987 regulation of cell cycle phase transition   94/1136
+##     BgRatio       pvalue     p.adjust       qvalue
+## 1 285/18870 5.491646e-07 1.877594e-03 1.706457e-03
+## 2 278/18870 1.895580e-32 9.868245e-29 7.689187e-29
+## 3 161/18870 3.709867e-32 9.868245e-29 7.689187e-29
+## 4 424/18870 3.360736e-31 5.959706e-28 4.643712e-28
+## 5 441/18870 4.315619e-27 5.739773e-24 4.472344e-24
+## 6 456/18870 1.368659e-26 1.456254e-23 1.134691e-23
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     geneID
+## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                            4774/3570/57326/8609/7476/5593/7045/1302/5467/55790/6653/7480/30812/7067/9241/8313/5155/89766
+## 2                                                                                                                             378708/4678/4998/51514/6241/348654/4175/580/10293/10721/4171/5984/604/890/51053/3159/4172/5558/253714/6119/5982/4176/157570/84296/4173/9134/79075/4796/9401/80010/6240/79733/374393/2237/23649/10714/1111/55388/983/1763/5763/57379/1017/8914/144455/5985/8099/675/5983/5427/11169/5888/1854/9768/80119/54962/90381/641/116028/23594/64785/51659/81620/79915/990/672/146956/7083/10189/201254/5932/10036/4784/898/10856/8318/4174/29980/8208
+## 3                                                                                                                                                                                                                                     378708/4998/348654/4175/580/10293/10721/4171/5984/604/51053/3159/4172/5558/253714/5982/4176/84296/4173/9134/79075/4796/9401/6240/79733/2237/23649/10714/55388/1763/57379/1017/8914/144455/5985/8099/675/5983/5427/11169/5888/54962/90381/641/23594/64785/51659/81620/79915/990/672/146956/7083/10189/201254/5932/898/8318/4174/29980
+## 4 378708/55143/991/11004/6491/84722/83540/259266/9928/4751/1063/348654/79172/23397/699/57405/51776/57520/151246/55355/151648/4292/5359/10051/1894/64151/1062/4085/84057/79682/9319/891/64946/9232/203068/3833/55166/7272/387103/54892/157313/157570/2669/9134/401541/10592/10783/81930/113130/11130/983/3832/4288/29127/9700/79023/9735/5901/221150/440145/9787/8110/7517/701/90417/57082/11339/51203/9133/55055/9493/9055/116028/5347/55839/81620/83903/9212/10615/990/7153/29893/7283/672/146909/3837/348235/83990/332/201254/10403/220134/147841/256126/898/11144/79019
+## 5                                        378708/2827/55143/991/11004/8438/84722/83540/259266/9928/4751/1063/348654/23397/699/57405/151648/4292/10051/64151/1062/4085/84057/9319/891/995/9232/7124/3833/7272/54443/54892/157313/9134/286151/80010/1164/10592/81930/113130/1111/84930/11130/983/3832/4288/10635/29127/9700/3479/9735/5901/675/440145/10419/9787/3306/7517/701/90417/57082/5888/51203/9133/55055/9493/9055/9088/5347/55512/81620/2175/83903/9212/10615/7153/29893/7283/146909/3837/146956/83990/8877/332/201254/10403/147841/256126/898/27338/5902/3976/11144
+## 6                                                            26270/63967/55143/991/6491/1031/4998/4582/83540/9928/8444/25896/51514/1063/3398/6241/348654/699/57405/51776/57520/580/993/83666/151636/1062/4085/9319/7015/891/995/8870/1026/7272/54443/1021/2146/1029/10783/6240/7465/113130/595/5962/1111/11130/983/1763/894/9700/1017/79035/8914/1019/144455/9735/675/7027/5720/5721/9787/4331/3306/8110/7517/701/57082/5888/79968/54962/55055/1543/90381/641/9088/5347/81620/83903/9212/79915/990/672/146956/83990/332/10403/5932/596/147841/25959/22809/8318/51512/29980
+##   Count
+## 1    18
+## 2    79
+## 3    60
+## 4    97
+## 5    93
+## 6    94
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Visualizar los resultados mediante un gráfico de puntos}
+
+\FunctionTok{dotplot}\NormalTok{(ck1, }\AttributeTok{showCategory =} \DecValTok{10}\NormalTok{, }\AttributeTok{font.size =} \FloatTok{10.5}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Análisis de enriquecimiento funcional"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2.Practica_Deseq2_files/figure-latex/unnamed-chunk-21-1.pdf}
+
+\hypertarget{volcano-plot}{%
+\subsection{Volcano plot}\label{volcano-plot}}
+
+\href{https://bioconductor.org/packages/devel/bioc/vignettes/EnhancedVolcano/inst/doc/EnhancedVolcano.html}{\textbf{EnhancedVolcano}}
+
+\begin{itemize}
+\item
+  Un volcano plot es una herramienta visual utilizada en análisis de
+  expresión diferencial para representar la relación entre la magnitud
+  del cambio (fold change) y la significancia estadística (valor p) de
+  cada gen. En este gráfico:
+\item
+  El eje x muestra el log₂ del fold change (log₂FC), indicando la
+  magnitud del cambio en la expresión génica entre dos condiciones.
+\item
+  El eje y muestra el valor p ajustado o el valor p negativo logaritmado
+  (-log₁₀(p)), representando la significancia estadística del cambio
+  observado.
+\item
+  Los puntos en las esquinas superiores del gráfico suelen representar
+  genes que son tanto estadísticamente significativos como
+  biológicamente relevantes, es decir, aquellos con un gran cambio en la
+  expresión y un valor p bajo.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(EnhancedVolcano)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: ggrepel
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Generar el volcano plot}
+
+\FunctionTok{EnhancedVolcano}\NormalTok{(res1,}
+    \AttributeTok{lab =} \FunctionTok{rownames}\NormalTok{(res1),}
+    \AttributeTok{x =} \StringTok{\textquotesingle{}log2FoldChange\textquotesingle{}}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{\textquotesingle{}pvalue\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2.Practica_Deseq2_files/figure-latex/unnamed-chunk-22-1.pdf}
+\#\# Referencias
+
+\href{https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html}{Deseq2}
+
+\end{document}

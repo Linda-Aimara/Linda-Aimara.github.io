@@ -1,0 +1,7 @@
+"0",""
+"0","heat.colors <- brewer.pal(6, ""Blues"")"
+"0",""
+"0","png(here(""imagenes/pheatmap.png""), units=""in"", width=5, height=5, res=600)"
+"0",""
+"0","pheatmap(rld_cor, color = heat.colors, border_color=NA, fontsize = 10,"
+"0","         fontsize_row = 10, height=20)"
