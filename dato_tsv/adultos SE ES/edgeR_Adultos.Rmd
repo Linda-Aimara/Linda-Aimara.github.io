@@ -1,0 +1,224 @@
+---
+title: "Edge R"
+author: "Linda Kempis"
+date: "2025-03-25"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+
+```{r}
+library(limma) 
+library(edgeR)
+library(tximport)
+library(ensembldb)
+library(biomaRt)
+library(EnhancedVolcano)
+library(tidyverse)
+
+```
+
+## Leyendo los datos
+
+
+```{r}
+FilesTSV<-list.files(pattern=".tsv")
+FilesTSV
+```
+
+```{r}
+read.delim(FilesTSV[6], nrow=10)
+
+```
+Nombrar las variables ensembl y tx2gene y hacer una “traducción” a la nomenclatura hgnc_symbol
+
+```{r}
+ensembl90 <- useEnsembl(biomart = 'ensembl', dataset="hsapiens_gene_ensembl")
+tx2gene1 <- getBM(attributes = c("ensembl_transcript_id_version", "hgnc_symbol"), mart = ensembl90)
+dim(tx2gene1)
+```
+```{r}
+sum(is.na(tx2gene1$hgnc_symbol))
+head(tx2gene1)
+
+```
+## Importar las muestras
+
+```{r}
+txi_kallisto1 <- tximport(FilesTSV, type = "kallisto", txIn = TRUE,txOut = FALSE, tx2gene = tx2gene1,geneIdCol = "hgnc_symbol" )
+head(txi_kallisto1$counts)
+```
+Darle nombre a las columnas con nuestras muestras, tal como se leyeron en la variable FilesTSV
+
+```{r}
+colnames(txi_kallisto1$counts) <- c("A1_ES", "A1_SE","A2_ES","A2_SE", "A4_ES", "A4_SE")
+head(txi_kallisto1$counts)
+```
+
+## Tabla de conteos para EdgeR
+
+```{r}
+head(txi_kallisto1$counts)
+```
+## Creación de DGEList
+Con la información de los conteos(txi_kallisto1) y el grupo de muestras(condition) formamos un objeto de tipo DGEList.
+
+
+```{r}
+# Crear vector de condicion
+condition = factor(c("stimulated", "unstimulated", "stimulated",
+"unstimulated","stimulated", "unstimulated"))
+condition
+
+```
+
+```{r}
+dge = DGEList(counts= txi_kallisto1$counts, group= condition)
+class(dge)
+```
+```{r}
+dge
+```
+
+El factor de normalización es 1 para todas las muestras, dado que no hemos normalizado.
+
+## Normalización
+
+La función calcNormFactors normaliza los datos mediante la búsqueda de un conjunto de factores de escala para cada biblioteca, que reduzcan al mínimo los cambios entre las muestras para la mayoría de los genes. El método utilizado para el cálculo de estos factores de escala es el TMM.
+
+```{r}
+colSums(txi_kallisto1$counts)
+```
+Como podemos observar loa tamaños de las muestras son diferentes en cierta proporción.
+
+
+Por default se utiliza el método TMM para normalizar
+```{r}
+dge<-calcNormFactors(dge,method="TMM")
+dge$samples
+```
+```{r}
+#/ get the normalized counts:
+cpms <- cpm(dge, log=FALSE)
+# guarda la tabla cpms, la cual seria su tabla de conteos normalizada 
+```
+
+## Analisis de nuestros datos
+###Multi-dimensional scaling plot
+El propósito del escalamiento multidimensional (MDS) es proporcionar una representación visual del patrón de proximidades (es decir, similitudes o distancias) entre un conjunto de objetos. El MDS toma un conjunto de similitudes y devuelve un conjunto de puntos cuyas distancias entre los puntos son aproximadamente iguales a las similitudes.
+
+```{r}
+# definiendo los colores de cada muestra
+fnColors=c(3,4,3,4,3,4)
+# graficando
+plotMDS(dge,col=fnColors)
+```
+
+## Analisis de genes
+
+Una vez que se normalizaron los datos, se hace el cálculo de la dispersión de los genes entre las muestras. Se pueden realizar dos tipos de cálculos de la dispersión de los genes, la denominada dispersión común y la dispersión por gen.
+
+
+```{r}
+## dispersión común
+dge <- estimateCommonDisp(dge)
+dge$common.dispersion
+
+```
+```{r}
+## Calculando dispersión entre las muestras para cada gene
+dge <- estimateTagwiseDisp(dge)
+head(dge$tagwise.dispersion)
+```
+
+edgeR utiliza el método de máxima verosimilitud condicional ajustada por cuantiles (qCML) para el análisis de expresiones de diseño unifactorial. El método qCML utiliza el pseudoconteo para ajustar el tamaño de la biblioteca para todas las muestras. edgeR calcula internamente el pseudoconteo para agilizar el análisis de la estimación de la dispersión binomial negativa (NB) y la prueba exacta para la comparación por pares.
+
+La dispersión se estima mediante la función estimateDisp(). Estima las dispersiones comunes y por gen en una sola ejecución.
+
+```{r}
+dge <- estimateDisp(y = dge)
+dge
+
+```
+Una vez que se hizo la normalización de los datos y el cálculo de la
+dispersión de los genes, se puede efectuar el cálculo de la expresión
+diferencial, utilizando la función exactTest.
+```{r}
+et = exactTest(dge,pair=c("unstimulated","stimulated"))
+et
+```
+
+################Clase del viernes###########
+## topTags
+La función topTags() es útil para extraer la tabla con valores p ajustados (FDR). La tabla de salida se ordena por valores p.
+
+Podemos interrogar los genes más diferencialmente expresados toptags :
+
+```{r}
+topTags(et)
+
+```
+
+
+```{r}
+summary(decideTests(object = et, lfc = ))
+
+```
+
+
+Vamos a asignar los resultados del cálculo de expresión diferencial al objeto resEdgeR y posteriormente seleccionaremos los genes que consideramos diferencialmente expresados
+
+```{r}
+resEdgeR<-topTags(et, n=Inf)$table
+dim(resEdgeR)
+head(resEdgeR)
+```
+
+Filter the genes based on the LFC and adjusted p-Value (|LFC|>=1 and p-adj<0.05).
+```{r}
+padj.cutoff <-0.05
+lfc.cutoff<- 1
+lfc_0 <-0
+
+res_df1 <- resEdgeR %>% data.frame()%>% rownames_to_column(var="gene") %>% as_tibble()
+
+sig1<- res_df1 %>% filter(FDR<= padj.cutoff & abs(logFC) >= lfc.cutoff)
+dim(sig1)
+sig_Neo <- res_df1 %>% filter(FDR<= padj.cutoff & logFC > lfc.cutoff)
+dim(sig_Neo)
+sig_Adul <- res_df1 %>% filter(FDR<= padj.cutoff & logFC <= -lfc.cutoff)
+dim(sig_Adul)
+```
+
+
+```{r}
+write.table(sig1,file="ES_vs_ES_DiffExp_edgeR.txt",sep="\t", quote=F)
+```
+
+
+
+```{r}
+plotMD(object = et)
+abline(h=c(-1, 1), col="blue")
+```
+
+
+
+## Volcan plot
+```{r}
+color_volcan <- EnhancedVolcano(resEdgeR,
+                lab = rownames(resEdgeR),
+                title = "Genes diferencialmente expresados",
+                subtitle = "Linfocitos T CD4+ de Adultos",
+                x = 'logFC',
+                y = 'PValue', 
+                pointSize = 3.0,
+                labSize = 4.0)
+
+color_volcan
+
+```
+
+

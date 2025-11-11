@@ -1,0 +1,6 @@
+"Cluster"	"category"	"subcategory"	"ID"	"Description"	"GeneRatio"	"BgRatio"	"pvalue"	"p.adjust"	"qvalue"	"geneID"	"Count"
+"1"	"Neonatos"	"Metabolism"	"Lipid metabolism"	"hsa00061"	"Fatty acid biosynthesis"	"4/109"	"18/8545"	6.67960059836906e-05	0.0152294893642815	0.0147654329016579	"23305/32/51703/23205"	4
+"2"	"Neonatos"	"Metabolism"	"Lipid metabolism"	"hsa00071"	"Fatty acid degradation"	"5/109"	"43/8545"	0.000201566464585975	0.0229785769628011	0.0222783987173972	"23305/1375/51703/23205/38"	5
+"3"	"Adultos"	"Environmental Information Processing"	"Signal transduction"	"hsa04066"	"HIF-1 signaling pathway"	"12/168"	"110/8545"	1.49209349746506e-06	0.000380483841853591	0.000370667437265006	"3643/3099/7422/5209/7010/3939/2023/6513/5230/5163/2034/5214"	12
+"4"	"Adultos"	"Metabolism"	"Carbohydrate metabolism"	"hsa00010"	"Glycolysis / Gluconeogenesis"	"7/168"	"67/8545"	0.000323137784401434	0.0412000675111828	0.0401371142730202	"3099/3939/2023/5230/7167/2821/5214"	7
+"5"	"Adultos"	"Human Diseases"	"Cancer: overview"	"hsa05202"	"Transcriptional misregulation in cancer"	"12/168"	"198/8545"	0.000513499113530354	0.0436474246500801	0.0425213301028644	"3248/85414/4613/3205/1991/8842/3398/6256/3087/2078/55589/4211"	12

@@ -1,0 +1,449 @@
+---
+title: "Evaluación de la expresión diferencial en muestras de CD4⁺ T cells con edgeR"
+author: "Dra. Linda Aimara Kempis Calanis"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+---
+## Librerias a utilizar 
+
+```{r,warning=FALSE,message=FALSE}
+library(limma) 
+library(edgeR)
+library(tximport)
+library(ensembldb)
+library(biomaRt)
+library(EnhancedVolcano)
+library(tidyverse)
+
+```
+
+## Leyendo los archivos .tsv
+
+
+```{r}
+# Obtiene una lista de todos los archivos en el directorio actual 
+# cuyo nombre coincide con el patrón ".tsv" (archivos de texto separados por tabulaciones).
+FilesTSV<-list.files(pattern=".tsv")
+FilesTSV
+```
+## Ensembl 
+**useEnsembl()** proviene del paquete biomaRt, que conecta R con la base de datos Ensembl.
+
+**getBM() (Get BioMart)** extrae datos según los attributes (columnas deseadas) y el objeto mart (la conexión).
+
+La variable **tx2gene1** suele usarse en análisis de expresión génica (por ejemplo, con tximport) para **mapear transcritos a genes**.
+
+**hgnc_symbol** proviene del HUGO Gene Nomenclature Committee, y es la forma estándar de nombrar genes humanos (por ejemplo, BRCA1, TP53).
+
+```{r}
+# Lee las primeras 10 filas del archivo TSV número 6 de la lista 'FilesTSV'
+# Esto permite inspeccionar rápidamente la estructura del archivo (columnas, formato, etc.)
+read.delim(FilesTSV[6], nrow=10)
+
+```
+Nombrar las variables ensembl y tx2gene y hacer una “traducción” a la nomenclatura hgnc_symbol
+
+```{r}
+# Conecta con la base de datos Ensembl (versión actual del servidor Ensembl)
+# 'biomart = "ensembl"' indica el tipo de base de datos.
+# 'dataset = "hsapiens_gene_ensembl"' especifica que se trabajará con genes humanos (Homo sapiens)
+ensembl90 <- useEnsembl(biomart = 'ensembl', dataset="hsapiens_gene_ensembl")
+
+# Obtiene una tabla con las relaciones entre los IDs de transcritos de Ensembl 
+# (incluyendo la versión del transcrito) y los símbolos de genes según HGNC (nomenclatura estándar de genes humanos).
+# Esto sirve para "traducir" los identificadores técnicos de Ensembl a nombres de genes más legibles.
+tx2gene1 <- getBM(attributes = c("ensembl_transcript_id_version", "hgnc_symbol"), mart = ensembl90)
+
+# Muestra las dimensiones del data frame resultante (número de filas y columnas)
+# para verificar cuántos pares transcript_id - hgnc_symbol se obtuvieron.
+dim(tx2gene1)
+```
+```{r}
+# Calcula cuántos valores faltantes (NA) hay en la columna 'hgnc_symbol' del data frame 'tx2gene1'.
+# Esto sirve para saber cuántos transcritos no tienen un símbolo de gen asociado en la base de datos HGNC.
+sum(is.na(tx2gene1$hgnc_symbol))
+# Muestra las primeras 6 filas del objeto 'tx2gene1' 
+
+head(tx2gene1)
+
+```
+
+## Filtra las filas del objeto 'tx2gene1' eliminando aquellas donde 'hgnc_symbol' es NA.
+
+```{r}
+# Filtra las filas del objeto 'tx2gene1' eliminando aquellas donde 'hgnc_symbol' es NA.
+# Es decir, conserva únicamente los transcritos que tienen un símbolo de gen válido según HGNC.
+tx2gene1 <- tx2gene1[!is.na(tx2gene1$hgnc_symbol), ]
+
+# Verifica nuevamente el número de filas después del filtrado,
+# para confirmar cuántos pares transcript_id / hgnc_symbol quedaron.
+dim(tx2gene1)
+
+# Opcional: mostrar las primeras filas del objeto limpio para inspeccionarlo.
+head(tx2gene1)
+```
+
+Explicación adicional:
+
+- La expresión **!is.na(tx2gene1$hgnc_symbol)** genera un vector lógico (TRUE / FALSE), y al usarlo entre corchetes [ ], se seleccionan solo las filas con valor TRUE, es decir, sin valores faltantes.
+
+- Este filtrado es importante porque herramientas como tximport (usada para importar resultados de cuantificación de expresión, por ejemplo de Salmon o Kallisto) necesitan un data frame sin valores vacíos para mapear correctamente los transcritos a genes.
+
+## Importar las muestras cuantificadas con Kallisto
+
+
+- **tximport()** es parte del paquete tximport, ampliamente usado para importar resultados de cuantificación (de Kallisto, Salmon, o Sailfish) y resumirlos a nivel de gen.
+
+Al usar tx2gene, tximport suma las abundancias o cuentas de todos los transcritos que pertenecen a un mismo gen.
+
+El argumento **geneIdCol** = "hgnc_symbol" asegura que los genes en la matriz final estén nombrados con los símbolos humanos estándar (por ejemplo, TP53, BRCA1).
+
+El objeto resultante txi_kallisto1 contiene varios elementos, entre ellos:
+
+- **counts:** matriz de cuentas crudas por gen.
+
+- **abundance**: valores normalizados (TPM).
+
+**length:** longitud promedio ponderada de los transcritos por gen.
+
+
+```{r}
+# Usa la función tximport para leer los resultados de expresión génica 
+# provenientes de varios archivos TSV generados por Kallisto.
+# Combina todos los resultados en un solo objeto listo para análisis posteriores (por ejemplo, con edgeR,Dese2...).
+
+txi_kallisto1 <- tximport(
+  FilesTSV,        # Lista de archivos TSV generados por Kallisto (uno por muestra)
+  type = "kallisto", # Especifica el tipo de cuantificador (en este caso, Kallisto)
+  txIn = TRUE,       # Indica que las filas de los archivos corresponden a transcritos individuales
+  txOut = FALSE,     # Indica que se desea resumir los datos a nivel de gen (no transcrito)
+  tx2gene = tx2gene1,# Data frame que relaciona transcritos de Ensembl con sus símbolos de gen (HGNC)
+  geneIdCol = "hgnc_symbol" # Define qué columna de tx2gene1 usar como identificador de gen
+)
+
+# Muestra las primeras filas de la matriz de conteos (genes x muestras)
+# Esto permite verificar que los datos se importaron correctamente.
+head(txi_kallisto1$counts)
+```
+Darle nombre a las columnas con nuestras muestras, tal como se leyeron en la variable FilesTSV
+
+```{r}
+# Renombra las columnas (muestras) del objeto 'txi_kallisto1$counts'
+# Estas columnas corresponden a las muestras importadas desde los archivos TSV de Kallisto.
+# Aquí se asignan nombres más cortos y significativos para cada muestra:
+# A1, A3, A4 = muestras del grupo A (por ejemplo, "tratadas")
+# N2, N3, N5 = muestras del grupo N (por ejemplo, "control")
+colnames(txi_kallisto1$counts) <- c("A1", "A3","A4","N2", "N3", "N5")
+head(txi_kallisto1$counts)
+```
+
+## Tabla de conteos para EdgeR
+
+**txi_kallisto1** es una lista que normalmente tiene varios elementos:
+
+- $counts: matriz de conteos por gen.
+
+- $abundance: valores normalizados (TPM o equivalentes).
+
+- $length: longitudes efectivas promedio de los transcritos.
+
+- **txi_kallisto1$counts** → accede solo al componente con los conteos crudos
+
+```{r}
+head(txi_kallisto1$counts)
+```
+## Creación de DGEList
+Con la información de los conteos(txi_kallisto1) y el grupo de muestras(condition) formamos un objeto de tipo DGEList.
+
+
+```{r}
+# Crear un vector que indique la condición biológica de cada muestra.
+# Debe coincidir en orden con las columnas de 'txi_kallisto1$counts':
+# A1, A3, A4 → Adultas (Adult_CD4_+_T_Cells)
+# N2, N3, N5 → Neonatales (Neonate_CD4_+_T_Cells)
+# Crear vector de condicion
+condition = factor(c("Adult_CD4_+_T_Cells", "Adult_CD4_+_T_Cells", "Adult_CD4_+_T_Cells",
+"Neonate_CD4_+_T_Cells","Neonate_CD4_+_T_Cells", "Neonate_CD4_+_T_Cells"))
+condition
+
+```
+
+```{r}
+# Crear un objeto DGEList para análisis de expresión diferencial con edgeR.
+# Este objeto almacena la matriz de conteos y la información de grupos (condiciones).
+
+dge <- DGEList(
+  counts = txi_kallisto1$counts, # Matriz de conteos de genes (filas = genes, columnas = muestras)
+  group = condition               # Vector con las condiciones biológicas (Adulto / Neonato)
+)
+
+# Verifica la clase del objeto para confirmar que se creó correctamente.
+class(dge)
+```
+```{r}
+dge
+```
+**DGEList()** es una función del paquete edgeR que crea un objeto especial para manejar datos de conteo.
+
+El objeto dge (Differential Gene Expression List) contiene varios componentes clave:
+
+**counts:** la matriz original de conteos.
+
+**samples:** metadatos de las muestras (nombres, grupo, tamaño de biblioteca, etc.).
+
+**genes:** (opcional) información sobre los genes si la agregas después.
+
+
+**El factor de normalización** es 1 para todas las muestras, dado que no hemos normalizado.
+
+## Normalización edgeR: la normalización por TMM (Trimmed Mean of M-values).
+
+La función calcNormFactors normaliza los datos mediante la búsqueda de un conjunto de factores de escala para cada biblioteca, que reduzcan al mínimo los cambios entre las muestras para la mayoría de los genes. El método utilizado para el cálculo de estos factores de escala es el TMM.
+
+```{r}
+colSums(txi_kallisto1$counts)
+```
+Como podemos observar loa tamaños de las muestras son diferentes en cierta proporción.
+
+Por default se utiliza el método TMM para normaizar
+```{r}
+dge<-calcNormFactors(dge,method="TMM")
+dge$samples
+```
+```{r}
+##Guardar tabla
+cpms <- cpm(dge, log=FALSE)
+# guarda la tabla cpms, la cual sería su tabla de conteos normalizada
+write.table(cpms,file="cpms_edgeR_adultos_vs_neonatos.txt",sep="\t")
+
+
+```
+
+## Filtrado de genes con baja expresión
+
+Los genes con muy pocos conteos en la mayoría de las muestras no aportan información útil y pueden introducir ruido en el análisis.
+Por eso, primero filtramos los genes poco expresados.
+
+```{r}
+# Calcular la cantidad mínima de lecturas promedio requerida (ej. 1 CPM)
+# CPM = Counts Per Million = medida de abundancia normalizada por tamaño de biblioteca
+keep <- filterByExpr(dge, group = condition)
+
+# Mantener solo los genes expresados adecuadamente
+dge <- dge[keep, , keep.lib.sizes = FALSE]
+
+# Ver cuántos genes se conservaron
+dge
+
+```
+**filterByExpr()** evalúa cada gen y conserva solo aquellos con niveles de expresión suficientes en al menos una condición.
+
+**keep.lib.sizes** = FALSE recalcula los tamaños de biblioteca después del filtrado.
+
+## Estimar la dispersión
+
+La dispersión mide la variabilidad biológica entre réplicas.
+En edgeR, se estima en tres niveles: común, trended y tagwise.
+
+
+
+## Analisis de nuestros datos Multi-dimensional scaling plot
+
+El propósito del escalamiento multidimensional (MDS) es proporcionar una representación visual del patrón de proximidades (es decir, similitudes o distancias) entre un conjunto de objetos. El MDS toma un conjunto de similitudes y devuelve un conjunto de puntos cuyas distancias entre los puntos son aproximadamente iguales a las similitudes.
+
+```{r}
+# definiendo los colores de cada muestra
+fnColors=c(3,3,3,4,4,4)
+# graficando
+plotMDS(dge,col=fnColors)
+```
+
+```{r, echo=FALSE}
+# Cargar librerías
+library(ggplot2)
+
+# Realizar el análisis MDS sobre el objeto DGEList
+mds <- plotMDS(dge, plot = FALSE)
+
+# Crear un data frame con los resultados
+mds_df <- data.frame(
+  Sample = colnames(dge$counts),
+  Dim1 = mds$x,
+  Dim2 = mds$y,
+  Group = condition
+)
+
+# Asignar colores según el grupo
+mds_colors <- c("Adult_CD4_+_T_Cells" = "forestgreen",
+                "Neonate_CD4_+_T_Cells" = "steelblue")
+
+# Crear el gráfico con ggplot2
+ggplot(mds_df, aes(x = Dim1, y = Dim2, color = Group, label = Sample)) +
+  geom_point(size = 4, alpha = 0.8) +
+  geom_text(vjust = -1, size = 3.5) +
+  scale_color_manual(values = mds_colors) +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "MDS Plot - CD4+ T Cells (edgeR)",
+    x = "Dim 1 (mayor variación entre muestras)",
+    y = "Dim 2 (segunda mayor variación)",
+    color = "Condición"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "top",
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "gray90")
+  )
+# -----------
+```
+
+## Analisis de genes
+
+Una vez que se normalizaron los datos, se hace el cálculo de la dispersión de los genes entre las muestras. Se pueden realizar dos tipos de cálculos de la dispersión de los genes, la denominada dispersión común y la dispersión por gen.
+
+
+```{r}
+## dispersión común
+dge <- estimateCommonDisp(dge)
+dge$common.dispersion
+
+```
+```{r}
+## Calculando dispersión entre las muestras para cada gene
+dge <- estimateTagwiseDisp(dge)
+head(dge$tagwise.dispersion)
+```
+
+edgeR utiliza el método de máxima verosimilitud condicional ajustada por cuantiles (qCML) para el análisis de expresiones de diseño unifactorial. El método qCML utiliza el pseudoconteo para ajustar el tamaño de la biblioteca para todas las muestras. edgeR calcula internamente el pseudoconteo para agilizar el análisis de la estimación de la dispersión binomial negativa (NB) y la prueba exacta para la comparación por pares.
+
+La dispersión se estima mediante la función estimateDisp(). Estima las dispersiones comunes y por gen en una sola ejecución.
+
+```{r}
+dge <- estimateDisp(y = dge)
+dge
+
+```
+Visualización de la dispersión
+
+```{r}
+plotBCV(dge)
+
+```
+
+Una vez que se hizo la normalización de los datos y el cálculo de la
+dispersión de los genes, se puede efectuar el cálculo de la expresión
+diferencial, utilizando la función exactTest.
+```{r}
+
+# Realizar la prueba exacta (Exact Test) para expresión diferencial
+# entre las dos condiciones: Neonate vs Adult.
+# Esta prueba usa un modelo binomial negativo para evaluar si los conteos
+# de cada gen difieren significativamente entre los grupos.
+et = exactTest(dge,pair=c("Neonate_CD4_+_T_Cells","Adult_CD4_+_T_Cells"))
+
+et
+```
+
+## 🧠 ¿Qué hace exactTest()?
+
+Compara los dos grupos definidos (pair) usando un test exacto similar al test exacto de Fisher,
+pero adaptado a conteos RNA-seq modelados con una distribución binomial negativa.
+
+Usa la dispersión estimada previamente (estimateDisp) para modelar la variabilidad entre réplicas.
+
+Calcula para cada gen:
+
+logFC: log₂ fold change (diferencia en expresión entre grupos).
+
+logCPM: abundancia promedio.
+
+PValue: significancia estadística sin corregir.
+
+🧬 Resumen del flujo de trabajo RNA-seq
+
+1️⃣ Importación de archivos de cuantificación (.tsv)
+2️⃣ Creación de la tabla de correspondencia (tx2gene)
+3️⃣ Importación de datos con tximport
+4️⃣ Asignación de nombres de muestras y condiciones experimentales
+5️⃣ Creación del objeto DGEList (edgeR)
+6️⃣ Normalización de datos con TMM
+7️⃣ Visualización de calidad mediante MDS Plot
+8️⃣ Análisis de expresión diferencial con exactTest
+
+
+##Clase de mañana ##
+topTags
+La función topTags() es útil para extraer la tabla con valores p ajustados (FDR). La tabla de salida se ordena por valores p.
+
+Podemos interrogar los genes más diferencialmente expresados toptags :
+
+```{r}
+topTags(et)
+
+```
+
+
+```{r}
+summary(decideTests(object = et, lfc = ))
+
+```
+
+
+Vamos a asignar los resultados del cálculo de expresión diferencial al objeto resEdgeR y posteriormente seleccionaremos los genes que consideramos diferencialmente expresados
+
+```{r}
+resEdgeR<-topTags(et, n=Inf)$table
+dim(resEdgeR)
+head(resEdgeR)
+```
+
+Filter the genes based on the LFC and adjusted p-Value (|LFC|>=1 and p-adj<0.05).
+```{r}
+padj.cutoff <-0.05
+lfc.cutoff<- 1
+lfc_0 <-0
+
+res_df1 <- resEdgeR %>% data.frame()%>% rownames_to_column(var="gene") %>% as_tibble()
+
+sig1<- res_df1 %>% filter(FDR<= padj.cutoff & abs(logFC) >= lfc.cutoff)
+dim(sig1)
+sig_Neo <- res_df1 %>% filter(FDR<= padj.cutoff & logFC > lfc.cutoff)
+dim(sig_Neo)
+sig_Adul <- res_df1 %>% filter(FDR<= padj.cutoff & logFC <= -lfc.cutoff)
+dim(sig_Adul)
+```
+
+
+```{r}
+write.table(sig1,file="Neo_vs_Adultos_DiffExp_edgeR.txt",sep="\t", quote=F)
+```
+
+
+
+```{r}
+plotMD(object = et)
+abline(h=c(-1, 1), col="blue")
+```
+
+
+
+## Volcan plot
+```{r}
+color_volcan <- EnhancedVolcano(resEdgeR,
+                lab = rownames(resEdgeR),
+                title = "Genes diferencialmente expresados",
+                subtitle = "Linfocitos T CD4+ Neonatos vs Adultos",
+                x = 'logFC',
+                y = 'PValue', 
+                pointSize = 3.0,
+                labSize = 4.0)
+
+color_volcan
+
+```
+
+
